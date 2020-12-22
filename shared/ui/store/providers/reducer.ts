@@ -297,7 +297,11 @@ export const getSupportedPullRequestHosts = createSelector(
 	(state: CodeStreamState) => state.providers,
 	(providerConfigs: ProvidersState) => {
 		return Object.values(providerConfigs).filter(
-			_ => _.id === "github*com" || _.id === "github/enterprise"
+			_ =>
+				_.id === "github*com" ||
+				_.id === "github/enterprise" ||
+				_.id === "gitlab*com" ||
+				_.id === "gitlab/enterprise"
 		);
 	}
 );
@@ -309,7 +313,13 @@ export const getConnectedSupportedPullRequestHosts = createSelector(
 	(state: CodeStreamState) => state.providers,
 	(users: UsersState, currentTeamId: string, session: SessionState, providers: ProvidersState) => {
 		return Object.values(providers)
-			.filter(_ => _.id === "github*com" || _.id === "github/enterprise")
+			.filter(
+				_ =>
+					_.id === "github*com" ||
+					_.id === "github/enterprise" ||
+					_.id === "gitlab*com" ||
+					_.id === "gitlab/enterprise"
+			)
 			.map(_ => {
 				let obj: { accessTokenError?: boolean } = {};
 				const value = isConnectedSelectorFriendly(

@@ -176,7 +176,9 @@ export const OpenPullRequests = React.memo((props: Props) => {
 
 	// FIXME hardcoded github
 	const hasPRSupportedRepos =
-		openReposWithName.filter(r => r.providerGuess === "github").length > 0;
+		openReposWithName.filter(r => r.providerGuess === "github" || r.providerGuess === "gitlab")
+			.length > 0;
+	console.log(hasPRSupportedRepos, openReposWithName);
 
 	const { queries } = derivedState;
 
@@ -488,7 +490,7 @@ export const OpenPullRequests = React.memo((props: Props) => {
 						<PaneBody>
 							{hasPRSupportedRepos && !derivedState.isPRSupportedCodeHostConnected && (
 								<>
-									<NoContent>Connect to GitHub to see your PRs</NoContent>
+									<NoContent>Connect to GitHub or GitLab to see your PRs</NoContent>
 									<IntegrationButtons noBorder>
 										{derivedState.PRSupportedProviders.map(provider => {
 											const providerDisplay = PROVIDER_MAPPINGS[provider.name];
@@ -607,21 +609,98 @@ export const OpenPullRequests = React.memo((props: Props) => {
 											</PaneNodeName>
 											{!query.hidden &&
 												prGroup &&
-												prGroup.map((pr, index) => {
-													const selected = openReposWithName.find(repo => {
+												prGroup.map((pr: any, index) => {
+													if (providerId === "github*com") {
+														const selected = openReposWithName.find(repo => {
+															return (
+																repo.currentBranch === pr.headRefName &&
+																pr.headRepository &&
+																repo.name === pr.headRepository.name
+															);
+														});
 														return (
-															repo.currentBranch === pr.headRefName &&
-															pr.headRepository &&
-															repo.name === pr.headRepository.name
+															<Tooltip
+																key={"pr-tt-" + pr.id + index}
+																title={<PullRequestTooltip pr={pr} />}
+																delay={1}
+																placement="top"
+															>
+																<Row
+																	key={"pr-" + pr.id}
+																	className={selected ? "pr-row selected" : "pr-row"}
+																	onClick={() => {
+																		dispatch(setCurrentPullRequest(pr.providerId, pr.id));
+
+																		HostApi.instance.track("PR Clicked", {
+																			Host: pr.providerId
+																		});
+																	}}
+																>
+																	<div>
+																		{selected && (
+																			<Icon name="arrow-right" className="selected-icon" />
+																		)}
+																		<PRHeadshot person={pr.author} />
+																	</div>
+																	<div>
+																		<span>
+																			{pr.title} #{pr.number}
+																		</span>
+																		{pr.labels &&
+																			pr.labels.nodes &&
+																			pr.labels.nodes.length > 0 &&
+																			derivedState.showLabels && (
+																				<span className="cs-tag-container">
+																					{pr.labels.nodes.map((_, index) => (
+																						<Tag
+																							key={index}
+																							tag={{ label: _.name, color: `#${_.color}` }}
+																						/>
+																					))}
+																				</span>
+																			)}
+																		<span className="subtle">{pr.bodyText || pr.body}</span>
+																	</div>
+																	<div className="icons">
+																		<span
+																			onClick={e => {
+																				e.preventDefault();
+																				e.stopPropagation();
+																				HostApi.instance.send(OpenUrlRequestType, {
+																					url: pr.url
+																				});
+																			}}
+																		>
+																			<Icon
+																				name="globe"
+																				className="clickable"
+																				title="View on GitHub"
+																				placement="bottomLeft"
+																				delay={1}
+																			/>
+																		</span>
+																		<Icon
+																			name="review"
+																			className="clickable"
+																			title="Review Changes"
+																			placement="bottomLeft"
+																			delay={1}
+																		/>
+																		<Timestamp time={pr.createdAt} relative abbreviated />
+																	</div>
+																</Row>
+															</Tooltip>
 														);
-													});
-													return (
-														<Tooltip
-															key={"pr-tt-" + pr.id + index}
-															title={<PullRequestTooltip pr={pr} />}
-															delay={1}
-															placement="top"
-														>
+													} else if (providerId === "gitlab*com") {
+														const selected = false;
+														// const selected = openReposWithName.find(repo => {
+														// 	return (
+														// 		repo.currentBranch === pr.headRefName &&
+														// 		pr.headRepository &&
+														// 		repo.name === pr.headRepository.name
+														// 	);
+														// });
+														return (
 															<Row
 																key={"pr-" + pr.id}
 																className={selected ? "pr-row selected" : "pr-row"}
@@ -637,25 +716,31 @@ export const OpenPullRequests = React.memo((props: Props) => {
 																	{selected && (
 																		<Icon name="arrow-right" className="selected-icon" />
 																	)}
-																	<PRHeadshot person={pr.author} />
+																	<PRHeadshot
+																		person={{
+																			login: pr.author.username,
+																			avatarUrl: pr.author.avatar_url
+																		}}
+																	/>
 																</div>
 																<div>
 																	<span>
 																		#{pr.number} {pr.title}
 																	</span>
 																	{pr.labels &&
-																		pr.labels.nodes.length > 0 &&
+																		pr.labels &&
+																		pr.labels.length > 0 &&
 																		derivedState.showLabels && (
 																			<span className="cs-tag-container">
-																				{pr.labels.nodes.map((_, index) => (
+																				{pr.labels.map((_, index) => (
 																					<Tag
 																						key={index}
-																						tag={{ label: _.name, color: `#${_.color}` }}
+																						tag={{ label: _.name, color: `${_.color}` }}
 																					/>
 																				))}
 																			</span>
 																		)}
-																	<span className="subtle">{pr.bodyText || pr.body}</span>
+																	<span className="subtle">{pr.description}</span>
 																</div>
 																<div className="icons">
 																	<span
@@ -663,30 +748,30 @@ export const OpenPullRequests = React.memo((props: Props) => {
 																			e.preventDefault();
 																			e.stopPropagation();
 																			HostApi.instance.send(OpenUrlRequestType, {
-																				url: pr.url
+																				url: pr.web_url
 																			});
 																		}}
 																	>
 																		<Icon
 																			name="globe"
 																			className="clickable"
-																			title="View on GitHub"
+																			title="View on GitLab"
 																			placement="bottomLeft"
 																			delay={1}
 																		/>
 																	</span>
-																	<Icon
+																	{/* <Icon
 																		name="review"
 																		className="clickable"
 																		title="Review Changes"
 																		placement="bottomLeft"
 																		delay={1}
-																	/>
-																	<Timestamp time={pr.createdAt} relative abbreviated />
+																	/> */}
+																	<Timestamp time={pr.created_at} relative abbreviated />
 																</div>
 															</Row>
-														</Tooltip>
-													);
+														);
+													} else return undefined;
 												})}
 										</PaneNode>
 									);
