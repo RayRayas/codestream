@@ -57,6 +57,7 @@ import {
 	ThirdPartyProviderSupportsIssues,
 	ThirdPartyProviderSupportsPullRequests
 } from "./provider";
+import { Directives } from "./directives";
 
 interface GitHubRepo {
 	id: string;
@@ -65,24 +66,10 @@ interface GitHubRepo {
 	has_issues: boolean;
 }
 
-interface Directives {
-	directives: {
-		type:
-			| "addNode"
-			| "addNodes"
-			| "addReaction"
-			| "removeNode"
-			| "removeReaction"
-			| "resolveReviewThread"
-			| "unresolveReviewThread"
-			| "updateNode"
-			| "updatePullRequest"
-			| "updatePullRequestReview"
-			| "updatePullRequestReviewers"
-			| "updatePullRequestReviewComment"
-			| "updatePullRequestReviewCommentNode";
-		data: any;
-	}[];
+export function cheese(): Function {
+	return (target: Function) => {
+		return target;
+	};
 }
 
 const diffHunkRegex = /^@@ -([\d]+)(?:,([\d]+))? \+([\d]+)(?:,([\d]+))? @@/;

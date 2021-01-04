@@ -87,6 +87,7 @@ import { supportsIntegrations } from "../store/configs/reducer";
 import { Keybindings } from "./Keybindings";
 import { setNewPostEntry } from "../store/context/actions";
 import { PullRequest } from "./PullRequest";
+import { PullRequest as GitLabPullRequest } from "./PullRequests/GitLab/PullRequest";
 import { Modal } from "./Modal";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,6 +126,7 @@ interface Props {
 	webviewFocused: boolean;
 	currentReviewId?: string;
 	currentPullRequestId?: string;
+	currentPullRequestProviderId?: string;
 	lightningCodeReviewsEnabled: boolean;
 	activePanel: WebviewPanels;
 	supportsIntegrations: boolean;
@@ -1193,7 +1195,12 @@ export class SimpleInlineCodemarks extends Component<Props, State> {
 	}
 
 	render() {
-		const { currentReviewId, currentPullRequestId, composeCodemarkActive } = this.props;
+		const {
+			currentReviewId,
+			currentPullRequestId,
+			currentPullRequestProviderId,
+			composeCodemarkActive
+		} = this.props;
 
 		const composeOpen = composeCodemarkActive ? true : false;
 		return (
@@ -1202,7 +1209,11 @@ export class SimpleInlineCodemarks extends Component<Props, State> {
 					{currentReviewId ? (
 						<ReviewNav reviewId={currentReviewId} composeOpen={composeOpen} />
 					) : currentPullRequestId ? (
-						<PullRequest />
+						currentPullRequestProviderId === "github" ? (
+							<PullRequest />
+						) : (
+							<GitLabPullRequest />
+						)
 					) : (
 						this.renderHeader()
 					)}
@@ -1386,6 +1397,9 @@ const mapStateToProps = (state: CodeStreamState) => {
 		currentStreamId: context.currentStreamId,
 		currentReviewId: context.currentReviewId,
 		currentPullRequestId: context.currentPullRequest ? context.currentPullRequest.id : undefined,
+		currentPullRequestProviderId: context.currentPullRequest
+			? context.currentPullRequest.providerId
+			: undefined,
 		team: teams[context.currentTeamId],
 		viewInline: context.codemarksFileViewStyle === "inline",
 		viewHeadshots: configs.showHeadshots,
