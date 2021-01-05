@@ -210,9 +210,10 @@ export const PullRequestFilesChangedList = (props: Props) => {
 
 	const commentMap = React.useMemo(() => {
 		const map = {} as any;
-		const reviews = pr
-			? pr.timelineItems.nodes.filter(node => node.__typename === "PullRequestReview")
-			: [];
+		const reviews =
+			pr && pr.timelineItems
+				? pr.timelineItems.nodes.filter(node => node.__typename === "PullRequestReview")
+				: [];
 		reviews.forEach(review => {
 			if (review.comments) {
 				review.comments.nodes.forEach(comment => {
@@ -403,7 +404,7 @@ export const PullRequestFilesChangedList = (props: Props) => {
 											className="clickable"
 											onClick={e => copy(_.filename)}
 										/>{" "}
-										{pr && (
+										{pr && pr.url && (
 											<Link
 												href={pr.url.replace(
 													/\/pull\/\d+$/,

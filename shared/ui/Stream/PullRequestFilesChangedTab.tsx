@@ -82,7 +82,7 @@ export const PullRequestFilesChangedTab = (props: {
 			<PullRequestFilesChangedList
 				pr={pr}
 				filesChanged={filesChanged}
-				repositoryName={pr.repository.name}
+				repositoryName={pr.repository && pr.repository.name}
 				baseRef={pr.baseRefOid}
 				baseRefName={pr.baseRefName}
 				headRef={pr.headRefOid}
