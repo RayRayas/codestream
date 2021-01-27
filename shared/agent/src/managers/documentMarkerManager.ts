@@ -281,6 +281,7 @@ export class DocumentMarkerManager {
 		});
 		const documentMarkers: DocumentMarker[] = [];
 
+		// TODO hardcoded stuff
 		if (providerId === "gitlab/enterprise" || providerId === "gitlab*com") {
 			const pr = result.project.mergeRequest;
 			const comments: any[] = [];
@@ -570,16 +571,6 @@ export class DocumentMarkerManager {
 			`MARKERS: calculating codemark document markers for ${documentUri.fsPath} v${doc?.version}`
 		);
 
-		const {
-			codemarks,
-			files,
-			markers,
-			markerLocations,
-			users,
-			reviews,
-			posts
-		} = SessionContainer.instance();
-
 		const documentMarkers: DocumentMarker[] = [];
 		const markersNotLocated: MarkerNotLocated[] = [];
 		const filePath = documentUri.fsPath;
@@ -691,11 +682,6 @@ export class DocumentMarkerManager {
 						if (missingLocation) {
 							markersNotLocated.push({
 								...marker,
-								fileUri: documentUri.toString(),
-								codemark: codemark,
-								creatorName: (creator && creator.username) || "Unknown",
-								range: MarkerLocation.toRange(location),
-								location: location,
 								...(title ? { title } : {}),
 								summary: summary,
 								summaryMarkdown: `${Strings.escapeMarkdown(summary, { quoted: false })}`,
@@ -710,35 +696,16 @@ export class DocumentMarkerManager {
 									"location not found"}, reason: ${missingLocation.reason}`
 							);
 						} else {
-							const missingLocation = missingLocations[marker.id];
-							if (missingLocation) {
-								markersNotLocated.push({
-									...marker,
-									...(title ? { title } : {}),
-									summary: summary,
-									summaryMarkdown: `${Strings.escapeMarkdown(summary, { quoted: false })}`,
-									creatorName: (creator && creator.username) || "Unknown",
-									codemark: codemark,
-									notLocatedReason: missingLocation.reason,
-									notLocatedDetails: missingLocation.details
-								});
-								Logger.log(
-									cc,
-									`MARKERS: ${marker.id}=${missingLocation.details ||
-										"location not found"}, reason: ${missingLocation.reason}`
-								);
-							} else {
-								markersNotLocated.push({
-									...marker,
-									...(title ? { title } : {}),
-									summary: summary,
-									summaryMarkdown: `${Strings.escapeMarkdown(summary, { quoted: false })}`,
-									creatorName: (creator && creator.username) || "Unknown",
-									codemark: codemark,
-									notLocatedReason: MarkerNotLocatedReason.UNKNOWN
-								});
-								Logger.log(cc, `MARKERS: ${marker.id}=location not found, reason: unknown`);
-							}
+							markersNotLocated.push({
+								...marker,
+								...(title ? { title } : {}),
+								summary: summary,
+								summaryMarkdown: `${Strings.escapeMarkdown(summary, { quoted: false })}`,
+								creatorName: (creator && creator.username) || "Unknown",
+								codemark: codemark,
+								notLocatedReason: MarkerNotLocatedReason.UNKNOWN
+							});
+							Logger.log(cc, `MARKERS: ${marker.id}=location not found, reason: unknown`);
 						}
 					}
 				} catch (ex) {
