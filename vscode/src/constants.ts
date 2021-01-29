@@ -1,6 +1,6 @@
 "use strict";
 
-export const extensionId = "codestream";
+export const extensionId = "github-enterprise";
 export const extensionOutputChannelName = "CodeStream";
 export const extensionQualifiedId = `CodeStream.${extensionId}`;
 
