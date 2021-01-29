@@ -1,6 +1,6 @@
 # CodeStream
 
-CodeStream is a developer collaboration platform that integrates essential dev tools, such as GitHub, GitLab, Bitbucket, Slack, Teams, Jira, Trello and more, into VS Code. Eliminate context-switching and simplify code discussion and code review by putting collaboration tools in your IDE.
+CodeStream is a developer collaboration platform that integrates essential dev tools, such as GitHub Enterprise, Slack, Teams, Jira, Trello and more, into VS Code. Eliminate context-switching and simplify code discussion and code review by putting collaboration tools in your IDE.
 
 ### Requirements
 
@@ -43,15 +43,11 @@ CodeStream turns conversation into documentation by capturing all of the discuss
 
 Previously discussed questions and issues that explain important decisions are now accessible right where you need them, when you need them. Just click on the codemark to expand it and see how something works or why something was done a certain way.
 
-# Team Transparency through Live View
-
-Development is a collaborative activity, yet much of it happens in isolation, with work only shared with the team at the end of a cycle, or sprint. CodeStream’s “LiveView” increases transparency by making the local edits of individual developers visible to team members, so that everyone knows what everyone else is working on, in real-time.
-
-As developers write code, whether editing existing files or creating new files, a summary of their changes, including the repo(s), files, and lines changed is exposed to their teammates through CodeStream. The information is displayed contextually, in the IDE, and even warns teammates of potential merge conflicts… before they happen!
-
-![Live View](https://raw.githubusercontent.com/TeamCodeStream/codestream-guide/develop/docs/src/assets/images/MyTeamSection-LiveView.png)
-
 # Frequently Asked Questions
+
+#### Does CodeStream have an on-prem solution?
+
+Yes! If it's important for your company to keep everything on your own local network, read our [CodeStream On-Prem documentation](https://docs.codestream.com/onprem/) to learn more about the offering. You can be up and running in just minutes!
 
 #### Where are messages stored?
 
