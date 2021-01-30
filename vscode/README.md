@@ -59,5 +59,5 @@ Check out the [user guide](https://docs.codestream.com/userguide/) for more info
 
 <p align="center">
   <br />
-  <a title="Learn more about CodeStream" href="https://codestream.com?utm_source=vscmarket&utm_medium=banner&utm_campaign=codestream"><img src="https://alt-images.codestream.com/codestream_logo_vscmarketplace.png" alt="CodeStream Logo" /></a>
+  <a title="Learn more about CodeStream" href="https://codestream.com?utm_source=vscmarket&utm_medium=banner&utm_campaign=codestream"><img src="https://alt-images.codestream.com/codestream_logo_vscmarketplace_ghe.png" alt="CodeStream Logo" /></a>
 </p>
